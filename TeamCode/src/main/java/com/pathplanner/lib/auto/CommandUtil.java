@@ -142,10 +142,10 @@ public class CommandUtil {
       onTrueCmd = commandFromJson((JSONObject) onTrue.get(0), loadChoreoPaths);
       onFalseCmd = commandFromJson((JSONObject) onFalse.get(0), loadChoreoPaths);
       namedConditionalSupp = NamedConditions.getCondition(namedConditional);
+
+      return new ConditionalCommand(onTrueCmd, onFalseCmd, namedConditionalSupp);
     } else {
       return Commands.none();
     }
-
-    return new ConditionalCommand(onTrueCmd, onFalseCmd, namedConditionalSupp);
   }
 }
