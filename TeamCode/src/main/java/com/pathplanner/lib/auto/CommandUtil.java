@@ -3,8 +3,11 @@ package com.pathplanner.lib.auto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.*;
 import java.io.IOException;
+import java.util.function.BooleanSupplier;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
 /** Utility class for building commands used in autos */
@@ -48,6 +51,7 @@ public class CommandUtil {
       case "parallel" -> parallelGroupFromData(data, loadChoreoPaths);
       case "race" -> raceGroupFromData(data, loadChoreoPaths);
       case "deadline" -> deadlineGroupFromData(data, loadChoreoPaths);
+      case "conditional" -> conditionalGroupFromData(data, loadChoreoPaths);
       default -> Commands.none();
     };
   }
@@ -121,5 +125,27 @@ public class CommandUtil {
     } else {
       return Commands.none();
     }
+  }
+
+  private static Command conditionalGroupFromData(JSONObject dataJson, boolean loadChoreoPaths)
+          throws IOException, ParseException {
+    JSONArray onTrue = (JSONArray) dataJson.get("onTrue");
+    JSONArray onFalse = (JSONArray) dataJson.get("onFalse");
+
+    String namedConditional = (String) dataJson.get("namedConditional");
+
+    Command onTrueCmd;
+    Command onFalseCmd;
+    BooleanSupplier namedConditionalSupp;
+
+    if (!onTrue.isEmpty() || !onFalse.isEmpty() || !namedConditional.isEmpty()) {
+      onTrueCmd = commandFromJson((JSONObject) onTrue.get(0), loadChoreoPaths);
+      onFalseCmd = commandFromJson((JSONObject) onFalse.get(0), loadChoreoPaths);
+      namedConditionalSupp = NamedConditions.getCondition(namedConditional);
+    } else {
+      return Commands.none();
+    }
+
+    return new ConditionalCommand(onTrueCmd, onFalseCmd, namedConditionalSupp);
   }
 }
