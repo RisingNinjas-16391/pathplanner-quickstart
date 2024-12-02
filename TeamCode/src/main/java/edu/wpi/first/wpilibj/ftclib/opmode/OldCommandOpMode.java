@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.opmode;
+package edu.wpi.first.wpilibj.ftclib.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 

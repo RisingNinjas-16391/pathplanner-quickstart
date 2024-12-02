@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.hardware;
+package edu.wpi.first.wpilibj.ftclib.hardware;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public abstract class GyroEx implements HardwareDevice {
-
 
     public abstract void init();
 

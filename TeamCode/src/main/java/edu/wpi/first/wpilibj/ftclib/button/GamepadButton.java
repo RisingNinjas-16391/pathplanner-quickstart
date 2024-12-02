@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.button;
+package edu.wpi.first.wpilibj.ftclib.button;
 
 import static edu.wpi.first.util.ErrorMessages.requireNonNullParam;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.lib.ftclib.gamepad.GamepadEx;
-import org.firstinspires.ftc.teamcode.lib.ftclib.gamepad.GamepadKeys;
-
+import edu.wpi.first.wpilibj.ftclib.gamepad.GamepadEx;
+import edu.wpi.first.wpilibj.ftclib.gamepad.GamepadKeys;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**

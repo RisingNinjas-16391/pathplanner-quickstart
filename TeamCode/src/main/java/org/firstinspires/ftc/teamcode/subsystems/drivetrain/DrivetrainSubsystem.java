@@ -15,8 +15,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.lib.ftclib.hardware.motors.Motor;
-import org.firstinspires.ftc.teamcode.lib.ftclib.hardware.motors.MotorEx;
 
 import java.util.Arrays;
 
@@ -31,6 +29,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.ftclib.hardware.motors.MotorEx;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Represents a mecanum drive style drivetrain. */
@@ -78,10 +77,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_frontLeftMotor.setInverted(true);
         m_backLeftMotor.setInverted(true);
 
-        m_frontRightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m_frontLeftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m_backLeftMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        m_backRightMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        m_frontRightMotor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        m_frontLeftMotor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        m_backLeftMotor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        m_backRightMotor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 
         m_frontRightMotor.stopAndResetEncoder();
         m_frontLeftMotor.stopAndResetEncoder();

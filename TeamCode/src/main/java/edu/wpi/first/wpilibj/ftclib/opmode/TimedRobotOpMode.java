@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.opmode;
+package edu.wpi.first.wpilibj.ftclib.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -9,8 +9,6 @@ public abstract class TimedRobotOpMode extends OpMode {
     @Override
     public final void init() {
         NetworkTableInstance.getDefault().startServer();
-
-        NetworkTableInstance.getDefault().getEntry("topic").setBoolean(true);
 
         Robot.disable();
         robotInit();

@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
-import org.firstinspires.ftc.teamcode.lib.ftclib.button.GamepadButton;
-import org.firstinspires.ftc.teamcode.lib.ftclib.gamepad.GamepadEx;
-import org.firstinspires.ftc.teamcode.lib.ftclib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DrivetrainSubsystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.ftclib.button.GamepadButton;
+import edu.wpi.first.wpilibj.ftclib.gamepad.GamepadEx;
+import edu.wpi.first.wpilibj.ftclib.gamepad.GamepadKeys;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 

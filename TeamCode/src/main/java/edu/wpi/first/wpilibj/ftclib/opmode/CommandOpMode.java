@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.opmode;
+package edu.wpi.first.wpilibj.ftclib.opmode;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 

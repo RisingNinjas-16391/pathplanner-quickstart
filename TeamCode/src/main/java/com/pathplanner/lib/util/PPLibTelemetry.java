@@ -11,7 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import org.firstinspires.ftc.teamcode.lib.ftclib.opmode.Robot;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 

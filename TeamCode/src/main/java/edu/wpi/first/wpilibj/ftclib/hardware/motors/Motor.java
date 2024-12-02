@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.hardware.motors;
+package edu.wpi.first.wpilibj.ftclib.hardware.motors;
+
+import android.icu.util.Measure;
 
 import androidx.annotation.NonNull;
 
@@ -7,12 +9,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.lib.ftclib.hardware.HardwareDevice;
-
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.ftclib.hardware.HardwareDevice;
 
 /**
  * This is the common wrapper for the {@link DcMotor} object in the

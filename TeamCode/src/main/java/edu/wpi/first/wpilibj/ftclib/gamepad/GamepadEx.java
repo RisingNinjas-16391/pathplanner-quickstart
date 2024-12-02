@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.gamepad;
+package edu.wpi.first.wpilibj.ftclib.gamepad;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.lib.ftclib.button.GamepadButton;
-import org.firstinspires.ftc.teamcode.lib.ftclib.gamepad.GamepadKeys.Button;
-
 import java.util.HashMap;
+
+import edu.wpi.first.wpilibj.ftclib.button.GamepadButton;
+import edu.wpi.first.wpilibj.ftclib.gamepad.GamepadKeys.Button;
+
 
 /**
  * An extended gamepad for more advanced toggles, key events,

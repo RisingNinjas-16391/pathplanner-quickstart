@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.ftclib.hardware;
+package edu.wpi.first.wpilibj.ftclib.hardware;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
