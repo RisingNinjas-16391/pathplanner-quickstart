@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -60,15 +61,14 @@ public class PathPlannerAuto extends Command {
   public PathPlannerAuto(String autoName) {
     if (!AutoBuilder.isConfigured()) {
       throw new AutoBuilderException(
-          "AutoBuilder was not configured before attempting to load a PathPlannerAuto from file");
+              "AutoBuilder was not configured before attempting to load a PathPlannerAuto from file");
     }
 
     try (BufferedReader br =
-        new BufferedReader(
-                new InputStreamReader(
-                        AutoBuilder.getHardwareMap().appContext
-                                .getAssets()
-                                .open("pathplanner" + "/autos/" + autoName + ".auto")))) {
+                 new BufferedReader(
+                         new FileReader(
+                                 new File(
+                                         Filesystem.getDeployDirectory(), "pathplanner/autos/" + autoName + ".auto")))) {
       StringBuilder fileContentBuilder = new StringBuilder();
       String line;
       while ((line = br.readLine()) != null) {
@@ -91,21 +91,21 @@ public class PathPlannerAuto extends Command {
       autoCommand = Commands.none();
     } catch (IOException e) {
       RobotLog.e(
-          "Failed to read file required by auto: " + autoName, e.getStackTrace());
+              "Failed to read file required by auto: " + autoName, e.getStackTrace());
       autoCommand = Commands.none();
     } catch (ParseException e) {
       RobotLog.e(
-          "Failed to parse JSON in file required by auto: " + autoName, e.getStackTrace());
+              "Failed to parse JSON in file required by auto: " + autoName, e.getStackTrace());
       autoCommand = Commands.none();
     } catch (FileVersionException e) {
       RobotLog.e(
-          "Failed to load auto: " + autoName + ". " + e.getMessage(), e.getStackTrace());
+              "Failed to load auto: " + autoName + ". " + e.getMessage(), e.getStackTrace());
       autoCommand = Commands.none();
     }
 
     addRequirements(autoCommand.getRequirements());
     setName(autoName);
-//    PPLibTelemetry.registerHotReloadAuto(autoName, this);
+    PPLibTelemetry.registerHotReloadAuto(autoName, this);
 
     this.autoLoop = new EventLoop();
     this.autoTimer = new Timer();
@@ -186,12 +186,12 @@ public class PathPlannerAuto extends Command {
         }
 
         Translation2d pos =
-            currentTrajectory.sample(event.getTimestampSeconds()).pose.getTranslation();
+                currentTrajectory.sample(event.getTimestampSeconds()).pose.getTranslation();
         eventStartPositions.get(event.getEventName()).add(pos);
         eventEndPositions.get(event.getEventName()).add(pos);
       } else if (e instanceof TriggerEvent event) {
         Translation2d pos =
-            currentTrajectory.sample(event.getTimestampSeconds()).pose.getTranslation();
+                currentTrajectory.sample(event.getTimestampSeconds()).pose.getTranslation();
 
         if (event.getValue()) {
           if (!eventStartPositions.containsKey(event.getEventName())) {
@@ -271,35 +271,35 @@ public class PathPlannerAuto extends Command {
    */
   public Trigger beforeEvent(String eventName, double timeSeconds) {
     return condition(
-        () -> {
-          if (currentTrajectory == null) {
-            return false;
-          }
-
-          Event upcoming = null;
-          for (Event e : currentTrajectory.getEvents()) {
-            if (e instanceof OneShotTriggerEvent event) {
-              if (event.getTimestampSeconds() > trajTimer.get()
-                  && eventName.equals(event.getEventName())) {
-                upcoming = e;
-                break;
+            () -> {
+              if (currentTrajectory == null) {
+                return false;
               }
-            } else if (e instanceof TriggerEvent event) {
-              if (event.getValue()
-                  && event.getTimestampSeconds() > trajTimer.get()
-                  && eventName.equals(event.getEventName())) {
-                upcoming = e;
-                break;
+
+              Event upcoming = null;
+              for (Event e : currentTrajectory.getEvents()) {
+                if (e instanceof OneShotTriggerEvent event) {
+                  if (event.getTimestampSeconds() > trajTimer.get()
+                          && eventName.equals(event.getEventName())) {
+                    upcoming = e;
+                    break;
+                  }
+                } else if (e instanceof TriggerEvent event) {
+                  if (event.getValue()
+                          && event.getTimestampSeconds() > trajTimer.get()
+                          && eventName.equals(event.getEventName())) {
+                    upcoming = e;
+                    break;
+                  }
+                }
               }
-            }
-          }
 
-          if (upcoming == null) {
-            return false;
-          }
+              if (upcoming == null) {
+                return false;
+              }
 
-          return (upcoming.getTimestampSeconds() - trajTimer.get()) < timeSeconds;
-        });
+              return (upcoming.getTimestampSeconds() - trajTimer.get()) < timeSeconds;
+            });
   }
 
   /**
@@ -324,19 +324,19 @@ public class PathPlannerAuto extends Command {
    */
   public Trigger distanceFromEvent(String eventName, double distanceMeters) {
     return condition(
-        () -> {
-          if (!eventStartPositions.containsKey(eventName)) {
-            return false;
-          }
+            () -> {
+              if (!eventStartPositions.containsKey(eventName)) {
+                return false;
+              }
 
-          for (Translation2d pos : eventStartPositions.get(eventName)) {
-            if (AutoBuilder.getCurrentPose().getTranslation().getDistance(pos) <= distanceMeters) {
-              return true;
-            }
-          }
+              for (Translation2d pos : eventStartPositions.get(eventName)) {
+                if (AutoBuilder.getCurrentPose().getTranslation().getDistance(pos) <= distanceMeters) {
+                  return true;
+                }
+              }
 
-          return false;
-        });
+              return false;
+            });
   }
 
   /**
@@ -361,19 +361,19 @@ public class PathPlannerAuto extends Command {
    */
   public Trigger distanceFromEventEnd(String eventName, double distanceMeters) {
     return condition(
-        () -> {
-          if (!eventEndPositions.containsKey(eventName)) {
-            return false;
-          }
+            () -> {
+              if (!eventEndPositions.containsKey(eventName)) {
+                return false;
+              }
 
-          for (Translation2d pos : eventEndPositions.get(eventName)) {
-            if (AutoBuilder.getCurrentPose().getTranslation().getDistance(pos) <= distanceMeters) {
-              return true;
-            }
-          }
+              for (Translation2d pos : eventEndPositions.get(eventName)) {
+                if (AutoBuilder.getCurrentPose().getTranslation().getDistance(pos) <= distanceMeters) {
+                  return true;
+                }
+              }
 
-          return false;
-        });
+              return false;
+            });
   }
 
   /**
@@ -420,9 +420,9 @@ public class PathPlannerAuto extends Command {
    */
   public Trigger nearFieldPosition(Translation2d fieldPosition, double toleranceMeters) {
     return condition(
-        () ->
-            AutoBuilder.getCurrentPose().getTranslation().getDistance(fieldPosition)
-                <= toleranceMeters);
+            () ->
+                    AutoBuilder.getCurrentPose().getTranslation().getDistance(fieldPosition)
+                            <= toleranceMeters);
   }
 
   /**
@@ -448,18 +448,18 @@ public class PathPlannerAuto extends Command {
    * @return nearFieldPositionAutoFlipped trigger
    */
   public Trigger nearFieldPositionAutoFlipped(
-      Translation2d blueFieldPosition, double toleranceMeters) {
+          Translation2d blueFieldPosition, double toleranceMeters) {
     Translation2d redFieldPosition = FlippingUtil.flipFieldPosition(blueFieldPosition);
     return condition(
-        () -> {
-          if (AutoBuilder.shouldFlip()) {
-            return AutoBuilder.getCurrentPose().getTranslation().getDistance(redFieldPosition)
-                <= toleranceMeters;
-          } else {
-            return AutoBuilder.getCurrentPose().getTranslation().getDistance(blueFieldPosition)
-                <= toleranceMeters;
-          }
-        });
+            () -> {
+              if (AutoBuilder.shouldFlip()) {
+                return AutoBuilder.getCurrentPose().getTranslation().getDistance(redFieldPosition)
+                        <= toleranceMeters;
+              } else {
+                return AutoBuilder.getCurrentPose().getTranslation().getDistance(blueFieldPosition)
+                        <= toleranceMeters;
+              }
+            });
   }
 
   /**
@@ -487,19 +487,19 @@ public class PathPlannerAuto extends Command {
    */
   public Trigger inFieldArea(Translation2d boundingBoxMin, Translation2d boundingBoxMax) {
     if (boundingBoxMin.getX() >= boundingBoxMax.getX()
-        || boundingBoxMin.getY() >= boundingBoxMax.getY()) {
+            || boundingBoxMin.getY() >= boundingBoxMax.getY()) {
       throw new IllegalArgumentException(
-          "Minimum bounding box position must have X and Y coordinates less than the maximum bounding box position");
+              "Minimum bounding box position must have X and Y coordinates less than the maximum bounding box position");
     }
 
     return condition(
-        () -> {
-          Pose2d currentPose = AutoBuilder.getCurrentPose();
-          return currentPose.getX() >= boundingBoxMin.getX()
-              && currentPose.getY() >= boundingBoxMin.getY()
-              && currentPose.getX() <= boundingBoxMax.getX()
-              && currentPose.getY() <= boundingBoxMax.getY();
-        });
+            () -> {
+              Pose2d currentPose = AutoBuilder.getCurrentPose();
+              return currentPose.getX() >= boundingBoxMin.getX()
+                      && currentPose.getY() >= boundingBoxMin.getY()
+                      && currentPose.getX() <= boundingBoxMax.getX()
+                      && currentPose.getY() <= boundingBoxMax.getY();
+            });
   }
 
   /**
@@ -515,31 +515,31 @@ public class PathPlannerAuto extends Command {
    * @return inFieldAreaAutoFlipped trigger
    */
   public Trigger inFieldAreaAutoFlipped(
-      Translation2d blueBoundingBoxMin, Translation2d blueBoundingBoxMax) {
+          Translation2d blueBoundingBoxMin, Translation2d blueBoundingBoxMax) {
     if (blueBoundingBoxMin.getX() >= blueBoundingBoxMax.getX()
-        || blueBoundingBoxMin.getY() >= blueBoundingBoxMax.getY()) {
+            || blueBoundingBoxMin.getY() >= blueBoundingBoxMax.getY()) {
       throw new IllegalArgumentException(
-          "Minimum bounding box position must have X and Y coordinates less than the maximum bounding box position");
+              "Minimum bounding box position must have X and Y coordinates less than the maximum bounding box position");
     }
 
     Translation2d redBoundingBoxMin = FlippingUtil.flipFieldPosition(blueBoundingBoxMin);
     Translation2d redBoundingBoxMax = FlippingUtil.flipFieldPosition(blueBoundingBoxMax);
 
     return condition(
-        () -> {
-          Pose2d currentPose = AutoBuilder.getCurrentPose();
-          if (AutoBuilder.shouldFlip()) {
-            return currentPose.getX() >= blueBoundingBoxMin.getX()
-                && currentPose.getY() >= blueBoundingBoxMin.getY()
-                && currentPose.getX() <= blueBoundingBoxMax.getX()
-                && currentPose.getY() <= blueBoundingBoxMax.getY();
-          } else {
-            return currentPose.getX() >= redBoundingBoxMin.getX()
-                && currentPose.getY() >= redBoundingBoxMin.getY()
-                && currentPose.getX() <= redBoundingBoxMax.getX()
-                && currentPose.getY() <= redBoundingBoxMax.getY();
-          }
-        });
+            () -> {
+              Pose2d currentPose = AutoBuilder.getCurrentPose();
+              if (AutoBuilder.shouldFlip()) {
+                return currentPose.getX() >= blueBoundingBoxMin.getX()
+                        && currentPose.getY() >= blueBoundingBoxMin.getY()
+                        && currentPose.getX() <= blueBoundingBoxMax.getX()
+                        && currentPose.getY() <= blueBoundingBoxMax.getY();
+              } else {
+                return currentPose.getX() >= redBoundingBoxMin.getX()
+                        && currentPose.getY() >= redBoundingBoxMin.getY()
+                        && currentPose.getX() <= redBoundingBoxMax.getX()
+                        && currentPose.getY() <= redBoundingBoxMax.getY();
+              }
+            });
   }
 
   /**
@@ -592,13 +592,12 @@ public class PathPlannerAuto extends Command {
    * @throws ParseException If JSON within file cannot be parsed
    */
   public static List<PathPlannerPath> getPathGroupFromAutoFile(String autoName)
-      throws IOException, ParseException {
+          throws IOException, ParseException {
     try (BufferedReader br =
-        new BufferedReader(
-                new InputStreamReader(
-                        AutoBuilder.getHardwareMap().appContext
-                                .getAssets()
-                                .open("pathplanner" + "/autos/" + autoName + ".auto")))) {
+                 new BufferedReader(
+                         new FileReader(
+                                 new File(
+                                         Filesystem.getDeployDirectory(), "pathplanner/autos/" + autoName + ".auto")))) {
       StringBuilder fileContentBuilder = new StringBuilder();
       String line;
       while ((line = br.readLine()) != null) {
@@ -627,7 +626,7 @@ public class PathPlannerAuto extends Command {
   }
 
   private void initFromJson(JSONObject autoJson)
-      throws IOException, ParseException, FileVersionException {
+          throws IOException, ParseException, FileVersionException {
     boolean choreoAuto = autoJson.get("choreoAuto") != null && (boolean) autoJson.get("choreoAuto");
     JSONObject commandJson = (JSONObject) autoJson.get("command");
     Command cmd = CommandUtil.commandFromJson(commandJson, choreoAuto);
@@ -636,9 +635,9 @@ public class PathPlannerAuto extends Command {
     if (!pathsInAuto.isEmpty()) {
       if (AutoBuilder.isHolonomic()) {
         this.startingPose =
-            new Pose2d(
-                pathsInAuto.get(0).getPoint(0).position,
-                pathsInAuto.get(0).getIdealStartingState().rotation());
+                new Pose2d(
+                        pathsInAuto.get(0).getPoint(0).position,
+                        pathsInAuto.get(0).getIdealStartingState().rotation());
       } else {
         this.startingPose = pathsInAuto.get(0).getStartingDifferentialPose();
       }
@@ -654,7 +653,7 @@ public class PathPlannerAuto extends Command {
   }
 
   private static List<PathPlannerPath> pathsFromCommandJson(
-      JSONObject commandJson, boolean choreoPaths) throws IOException, ParseException {
+          JSONObject commandJson, boolean choreoPaths) throws IOException, ParseException {
     List<PathPlannerPath> paths = new ArrayList<>();
 
     String type = (String) commandJson.get("type");
@@ -668,9 +667,9 @@ public class PathPlannerAuto extends Command {
         paths.add(PathPlannerPath.fromPathFile(pathName));
       }
     } else if (type.equals("sequential")
-        || type.equals("parallel")
-        || type.equals("race")
-        || type.equals("deadline")) {
+            || type.equals("parallel")
+            || type.equals("race")
+            || type.equals("deadline")) {
       for (var cmdJson : (JSONArray) data.get("commands")) {
         paths.addAll(pathsFromCommandJson((JSONObject) cmdJson, choreoPaths));
       }

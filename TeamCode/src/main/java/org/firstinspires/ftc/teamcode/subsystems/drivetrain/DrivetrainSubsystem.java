@@ -114,7 +114,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
                     ),
                     config,
                     () -> false,
-                    hwMap,
                     this
             );
         }catch(Exception e){
