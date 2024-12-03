@@ -129,8 +129,8 @@ public class CommandUtil {
 
   private static Command conditionalGroupFromData(JSONObject dataJson, boolean loadChoreoPaths)
           throws IOException, ParseException {
-    JSONArray onTrue = (JSONArray) dataJson.get("onTrue");
-    JSONArray onFalse = (JSONArray) dataJson.get("onFalse");
+    JSONObject onTrue = (JSONObject) dataJson.get("onTrue");
+    JSONObject onFalse = (JSONObject) dataJson.get("onFalse");
 
     String namedConditional = (String) dataJson.get("namedConditional");
 
@@ -139,8 +139,8 @@ public class CommandUtil {
     BooleanSupplier namedConditionalSupp;
 
     if (!onTrue.isEmpty() || !onFalse.isEmpty() || !namedConditional.isEmpty()) {
-      onTrueCmd = commandFromJson((JSONObject) onTrue.get(0), loadChoreoPaths);
-      onFalseCmd = commandFromJson((JSONObject) onFalse.get(0), loadChoreoPaths);
+      onTrueCmd = commandFromJson(onTrue, loadChoreoPaths);
+      onFalseCmd = commandFromJson(onFalse, loadChoreoPaths);
       namedConditionalSupp = NamedConditions.getCondition(namedConditional);
 
       return new ConditionalCommand(onTrueCmd, onFalseCmd, namedConditionalSupp);
